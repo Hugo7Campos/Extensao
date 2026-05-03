@@ -12,7 +12,7 @@ export default defineConfig({
    * Por exemplo: se o repo é 'extensao', a base deve ser '/extensao/'.
    * Isso garante que os arquivos (CSS, JS, Imagens) sejam carregados corretamente.
    */
-  base: '/extensao/',
+  base: '/Extensao/',
 })
 
 
