@@ -1,39 +1,50 @@
 import React from 'react';
-// HashRouter é necessário para o GitHub Pages (servidor estático não suporta rotas do BrowserRouter)
-// Com HashRouter, as URLs ficam como: /#/quiz, /#/result, /#/dashboard
+// O HashRouter é usado para garantir que as rotas funcionem corretamente no GitHub Pages.
+// Com ele, as URLs terão um '#' (ex: seu-site.com/#/extensao).
 import { HashRouter as Router, Routes, Route } from 'react-router-dom';
 
-// Importa as páginas da aplicação
+// Importação das páginas da aplicação
 import Home from './pages/Home';
 import Quiz from './pages/Quiz';
 import Result from './pages/Result';
 import Dashboard from './pages/Dashboard';
 
-// Importa os componentes fixos (que aparecem em todas as páginas)
+// Importação dos componentes fixos que aparecem em todas as páginas
 import Header from './components/Header';
 import Footer from './components/Footer';
 
+/**
+ * Componente principal App
+ * Aqui definimos a estrutura base do site e todas as rotas (páginas) disponíveis.
+ */
 function App() {
   return (
-    // Router envolve toda a aplicação para permitir a navegação
+    // O Router envolve toda a aplicação para habilitar o sistema de navegação
     <Router>
-      {/* Container principal que ocupa pelo menos a altura inteira da tela (min-h-screen) */}
       <div className="flex flex-col min-h-screen">
-        {/* Cabeçalho do site */}
+        {/* O Header (cabeçalho) fica no topo de todas as páginas */}
         <Header />
         
-        {/* main flex-grow garante que o conteúdo empurre o rodapé para baixo se a página for curta */}
+        {/* O elemento <main> contém o conteúdo principal que muda conforme a rota */}
+        {/* flex-grow garante que o conteúdo ocupe o espaço disponível, empurrando o footer para baixo */}
         <main className="flex-grow container mx-auto px-4 py-8">
-          {/* Configuração das rotas (URLs) da aplicação */}
+          {/* O Routes define qual componente será exibido dependendo do caminho na URL */}
           <Routes>
-            <Route path="/" element={<Home />} />           {/* Página Inicial */}
-            <Route path="/quiz" element={<Quiz />} />       {/* Tela do Formulário/Quiz */}
-            <Route path="/result" element={<Result />} />   {/* Tela de Resultados e Análise */}
-            <Route path="/dashboard" element={<Dashboard />} /> {/* Painel Administrativo */}
+            {/* Rota da Página Inicial */}
+            <Route path="/" element={<Home />} />           
+            
+            {/* Rota do Quiz/Formulário de avaliação */}
+            <Route path="/quiz" element={<Quiz />} />       
+            
+            {/* Rota dos Resultados após finalizar o quiz */}
+            <Route path="/result" element={<Result />} />   
+            
+            {/* Rota do Painel Administrativo - Alterada para /extensao conforme solicitado */}
+            <Route path="/extensao" element={<Dashboard />} /> 
           </Routes>
         </main>
         
-        {/* Rodapé do site */}
+        {/* O Footer (rodapé) fica na parte inferior de todas as páginas */}
         <Footer />
       </div>
     </Router>
@@ -41,3 +52,4 @@ function App() {
 }
 
 export default App;
+

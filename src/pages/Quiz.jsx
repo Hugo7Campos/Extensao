@@ -1,49 +1,70 @@
 import React from 'react';
-// Hook customizado com toda a lógica (o "motor" das perguntas que construímos)
+// Importação do Hook customizado que contém toda a lógica do Quiz (estado, pontuação, troca de perguntas)
 import { useQuizLogic } from '../hooks/useQuizLogic';
-// Componentes criados para o layout ficar organizado
+// Componentes de interface (UI)
 import QuestionCard from '../components/QuestionCard';
 import ProgressBar from '../components/ProgressBar';
-// Permite que componentes que somem da tela tenham uma animação de saída suave
+// Componente do Framer Motion para gerenciar animações de entrada e saída
 import { AnimatePresence } from 'framer-motion';
 
+/**
+ * Componente Quiz
+ * Esta é a tela onde as perguntas são exibidas uma a uma.
+ */
 const Quiz = () => {
-  // Pega todas as variáveis e funções necessárias do nosso motor
+  /**
+   * Desestruturação do Hook useQuizLogic:
+   * currentQuestion: Objeto com a pergunta atual
+   * currentQuestionIndex: Posição da pergunta (0, 1, 2...)
+   * totalQuestions: Quantidade total de perguntas no banco
+   * handleAnswer: Função disparada quando o usuário escolhe uma opção
+   * progress: Porcentagem de conclusão do quiz (0 a 100)
+   */
   const { currentQuestion, currentQuestionIndex, totalQuestions, handleAnswer, progress } = useQuizLogic();
 
   return (
     <div className="max-w-3xl mx-auto w-full py-8 flex flex-col min-h-[60vh]">
       
-      {/* Cabeçalho do Quiz com título e contador */}
+      {/* SEÇÃO SUPERIOR: Título e Barra de Progresso */}
       <div className="mb-8">
         <div className="flex justify-between items-end mb-2">
-          <h2 className="text-2xl font-display font-bold text-white">Avaliação de Risco</h2>
-          {/* Exemplo: Pergunta 1 de 5 */}
-          <span className="text-primary-400 text-sm font-medium">
-            Pergunta {currentQuestionIndex + 1} de {totalQuestions}
+          <h2 className="text-2xl font-display font-bold text-white glow-text">Avaliação de Risco</h2>
+          {/* Exibição dinâmica do contador: Pergunta X de Y */}
+          <span className="text-primary-400 text-sm font-medium bg-primary-950/30 px-3 py-1 rounded-full border border-primary-500/20">
+            Questão {currentQuestionIndex + 1} / {totalQuestions}
           </span>
         </div>
         
-        {/* Exibe a barra de progresso verde/azul passando a porcentagem atual calculada no Hook */}
+        {/* Barra visual que enche conforme o usuário avança */}
         <ProgressBar progress={progress} />
       </div>
 
-      {/* Área onde a pergunta em si vai renderizar */}
-      <div className="flex-grow flex items-center justify-center relative w-full">
-        {/* AnimatePresence mode="wait" garante que a pergunta atual suma antes da próxima aparecer */}
+      {/* SEÇÃO CENTRAL: Área da Pergunta */}
+      <div className="flex-grow flex items-center justify-center relative w-full overflow-hidden">
+        {/* 
+            AnimatePresence mode="wait" é essencial para o efeito de "slide":
+            Ele garante que a pergunta atual termine sua animação de saída
+            antes que a próxima pergunta comece a animação de entrada.
+        */}
         <AnimatePresence mode="wait">
-          {/* Se currentQuestion existir (não for nulo), desenha o cartão da pergunta na tela */}
+          {/* Só renderiza o QuestionCard se houver uma pergunta disponível */}
           {currentQuestion && (
             <QuestionCard 
-              key={currentQuestion.id} // key é importante para o Framer Motion saber que o item mudou e disparar a animação
-              question={currentQuestion} // Passa os textos da pergunta e opções
-              onAnswer={handleAnswer}    // Passa a função que executa quando o usuário clicar numa opção
+              key={currentQuestion.id}    // Chave única para o React e Framer Motion identificarem a troca
+              question={currentQuestion}  // Dados da pergunta (título, categoria, opções)
+              onAnswer={handleAnswer}     // Callback para processar a resposta
             />
           )}
         </AnimatePresence>
       </div>
+      
+      {/* Dica de rodapé sutil */}
+      <p className="text-center text-slate-500 text-xs mt-8">
+        Responda com sinceridade para obter um resultado preciso sobre sua segurança digital.
+      </p>
     </div>
   );
 };
 
 export default Quiz;
+

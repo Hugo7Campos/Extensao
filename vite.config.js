@@ -1,11 +1,18 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 
-// https://vitejs.dev/config/
+// Configuração principal do Vite: https://vitejs.dev/config/
 export default defineConfig({
+  // Plugins utilizados no projeto (React no nosso caso)
   plugins: [react()],
-  // IMPORTANTE: O 'base' deve ser o nome exato do seu repositório no GitHub
-  // Isso corrige o erro 404 nos assets (/assets/index...js) ao publicar no GitHub Pages
-  base: '/Extensao/',
+  
+  /**
+   * IMPORTANTE: A propriedade 'base' define o caminho base da aplicação.
+   * Se você for hospedar no GitHub Pages, este valor deve ser exatamente o nome do seu repositório.
+   * Por exemplo: se o repo é 'extensao', a base deve ser '/extensao/'.
+   * Isso garante que os arquivos (CSS, JS, Imagens) sejam carregados corretamente.
+   */
+  base: '/extensao/',
 })
+
 
