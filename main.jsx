@@ -2,7 +2,7 @@
 import React from 'react'
 import ReactDOM from 'react-dom/client'
 // Importa o componente principal da aplicação
-import App from './App.jsx'
+import App from './src/App.jsx'
 // Importa os estilos globais do Tailwind e customizações CSS
 import './index.css'
 
