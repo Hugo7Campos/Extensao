@@ -38,7 +38,9 @@ export const analyzeVulnerabilities = (respostas, questions) => {
     if (resp.pontuacao >= 5 && pergunta) {
       vulnerabilidades.push({
         categoria: pergunta.categoria,
-        mensagem: pergunta.vulnerabilidade
+        nomeGolpe: pergunta.nomeGolpe,
+        oQueE: pergunta.oQueE,
+        recomendacao: pergunta.recomendacao
       });
     }
   });

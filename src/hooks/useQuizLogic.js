@@ -1,6 +1,6 @@
 // Importa hooks do React. useState para estados e useNavigate para mudar de página
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { questions } from '../data/questions';
 
 // Hook customizado que controla toda a lógica do formulário interativo (o "motor" do Quiz)
@@ -11,8 +11,13 @@ export const useQuizLogic = () => {
   // Estado que guarda as respostas que o usuário já escolheu
   const [respostas, setRespostas] = useState([]);
   
-  // Usado para redirecionar o usuário para a página de resultados ao final
+  // Usado para redirecionar o usuário para a página de resultados ao final e pegar parâmetros
   const navigate = useNavigate();
+  const location = useLocation();
+  
+  // Extrai o nome do usuário passado na URL
+  const searchParams = new URLSearchParams(location.search);
+  const userName = searchParams.get('name') || 'Anônimo';
 
   // Função chamada toda vez que o usuário clica em uma resposta
   const handleAnswer = (pontuacao, respostaTexto) => {
@@ -39,8 +44,8 @@ export const useQuizLogic = () => {
       // Soma a pontuação de todas as respostas usando a função reduce()
       const scoreTotal = novasRespostas.reduce((acc, curr) => acc + curr.pontuacao, 0);
       
-      // Navega para a página de resultado ('/result') e envia os dados (score e respostas) junto
-      navigate('/result', { state: { scoreTotal, respostas: novasRespostas } });
+      // Navega para a página de resultado ('/result') e envia os dados (score, respostas, nome) junto
+      navigate('/result', { state: { scoreTotal, respostas: novasRespostas, userName } });
     }
   };
 

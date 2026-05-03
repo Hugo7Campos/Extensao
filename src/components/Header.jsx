@@ -20,9 +20,6 @@ const Header = () => {
             <li>
               <Link to="/" className="text-slate-300 hover:text-cyber-neon transition-colors">Início</Link>
             </li>
-            <li>
-              <Link to="/dashboard" className="text-slate-300 hover:text-cyber-neon transition-colors">Dashboard</Link>
-            </li>
           </ul>
         </nav>
 

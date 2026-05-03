@@ -1,12 +1,47 @@
-import React from 'react';
-// Link é usado para navegar entre as telas sem dar "refresh" na página, comum no React
-import { Link } from 'react-router-dom';
+import React, { useEffect, useState } from 'react';
+// useNavigate é usado para navegar entre as telas sem dar "refresh" na página, comum no React
+import { useNavigate } from 'react-router-dom';
 // Ícones da biblioteca lucide-react para decorar a página
 import { Shield, AlertTriangle, UserCheck, ChevronRight } from 'lucide-react';
 // Framer-motion permite criar animações de entrada ou movimento facilmente
 import { motion } from 'framer-motion';
+// Cliente Supabase
+import { supabase } from '../services/supabase';
 
 const Home = () => {
+  const navigate = useNavigate();
+  const [userName, setUserName] = useState('');
+  const [error, setError] = useState('');
+
+  useEffect(() => {
+    // Teste de conexão invisível para o usuário final
+    const testarConexao = async () => {
+      try {
+        const { error } = await supabase.auth.getSession();
+        if (error) {
+          console.error('❌ Falha na conexão com Supabase:', error.message);
+        } else {
+          console.log('✅ Conectado ao Supabase com sucesso!');
+        }
+      } catch (err) {
+        console.error('❌ Erro na conexão:', err.message);
+      }
+    };
+    
+    testarConexao();
+  }, []);
+
+  const handleStart = () => {
+    const finalName = userName.trim();
+    if (!finalName) {
+      setError('Por favor, digite seu nome para continuar.');
+      return;
+    }
+    
+    // Navega para a página do quiz passando o nome pela URL
+    navigate(`/quiz?name=${encodeURIComponent(finalName)}`);
+  };
+
   return (
     <div className="flex flex-col items-center justify-center py-12 md:py-20 text-center">
       
@@ -29,14 +64,37 @@ const Home = () => {
           Faça nosso teste interativo baseado em situações reais e receba uma análise do seu perfil digital.
         </p>
         
-        {/* Botão que leva para a página do Quiz */}
-        <Link 
-          to="/quiz" 
-          className="inline-flex items-center gap-2 bg-primary-600 hover:bg-primary-500 text-white font-bold py-4 px-8 rounded-full transition-all duration-300 transform hover:scale-105 glow-box"
-        >
-          Começar Avaliação Gratuita
-          <ChevronRight className="w-5 h-5" />
-        </Link>
+        {/* Formulário para capturar o nome antes de iniciar o teste */}
+        <div className="mt-8 max-w-md mx-auto bg-cyber-dark p-6 rounded-xl border border-cyber-border shadow-lg">
+          <label htmlFor="userName" className="block text-slate-300 mb-3 text-left font-medium">
+            Digite seu nome para começar:
+          </label>
+          <input 
+            type="text" 
+            id="userName"
+            value={userName}
+            onChange={(e) => {
+              setUserName(e.target.value);
+              if (error) setError('');
+            }}
+            placeholder="Seu nome completo ou apelido"
+            className={`w-full bg-slate-800 border ${error ? 'border-red-500' : 'border-slate-700'} rounded-lg p-3 text-white focus:outline-none focus:border-primary-500 mb-2 transition-colors`}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter') {
+                handleStart();
+              }
+            }}
+          />
+          {error && <p className="text-red-400 text-sm text-left mb-4">{error}</p>}
+          <button 
+            onClick={handleStart}
+            className={`w-full flex items-center justify-center gap-2 text-white font-bold py-4 px-8 rounded-lg transition-all duration-300 transform glow-box ${!userName.trim() ? 'bg-slate-600 cursor-not-allowed opacity-50' : 'bg-primary-600 hover:bg-primary-500 hover:scale-105'}`}
+            disabled={!userName.trim()}
+          >
+            Começar Avaliação
+            <ChevronRight className="w-5 h-5" />
+          </button>
+        </div>
       </motion.div>
 
       {/* Grid de Informações: Explica como o sistema funciona */}
