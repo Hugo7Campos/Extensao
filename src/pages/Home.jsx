@@ -43,7 +43,7 @@ const Home = () => {
   };
 
   return (
-    <div className="flex flex-col items-center justify-center py-12 md:py-20 text-center">
+    <div className="flex flex-col items-center justify-center py-12 md:py-20 px-4 sm:px-6 text-center">
       
       {/* Seção Principal (Hero). O motion.div faz essa parte aparecer dando um zoom e fade-in suave */}
       <motion.div 

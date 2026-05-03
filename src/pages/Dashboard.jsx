@@ -119,7 +119,7 @@ const Dashboard = () => {
 
   if (!isAuthenticated) {
     return (
-      <div className="flex flex-col items-center justify-center min-h-[60vh] py-12">
+      <div className="flex flex-col items-center justify-center min-h-[60vh] py-12 px-4">
         <motion.div 
           className="bg-cyber-card border border-cyber-border p-8 rounded-xl max-w-md w-full shadow-[0_0_20px_rgba(0,240,255,0.1)]"
           initial={{ opacity: 0, scale: 0.9 }}
@@ -173,11 +173,11 @@ const Dashboard = () => {
   }
 
   return (
-    <div className="max-w-6xl mx-auto py-8">
-      <div className="flex items-center justify-between mb-10">
+    <div className="max-w-6xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-10 gap-4">
         <div className="flex items-center gap-3">
-          <Activity className="w-8 h-8 text-primary-400" />
-          <h1 className="text-3xl md:text-4xl font-display font-bold text-white glow-text">Dashboard Administrativo</h1>
+          <Activity className="w-8 h-8 text-primary-400 shrink-0" />
+          <h1 className="text-2xl sm:text-3xl md:text-4xl font-display font-bold text-white glow-text">Dashboard Administrativo</h1>
         </div>
         <button 
           onClick={handleLogout}
@@ -238,43 +238,40 @@ const Dashboard = () => {
                 Nenhum dado encontrado. Faça uma avaliação ou verifique se as tabelas foram criadas no banco de dados para ver as estatísticas aparecerem aqui.
               </div>
             ) : (
-              <div className="overflow-x-auto">
-                <table className="w-full text-left border-collapse">
-                  <thead>
-                    <tr className="border-b border-cyber-border">
-                      <th className="py-4 px-4 text-slate-400 font-medium text-sm">Nome</th>
-                      <th className="py-4 px-4 text-slate-400 font-medium text-sm">Data/Hora</th>
-                      <th className="py-4 px-4 text-slate-400 font-medium text-sm">Pontuação</th>
-                      <th className="py-4 px-4 text-slate-400 font-medium text-sm">Nível de Risco</th>
-                      <th className="py-4 px-4 text-slate-400 font-medium text-sm">Nota (Estrelas)</th>
-                      <th className="py-4 px-4 text-slate-400 font-medium text-sm">Vulnerabilidades Detectadas</th>
-                      <th className="py-4 px-4 text-slate-400 font-medium text-sm">Comentário / Feedback</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {records.map((record) => {
-                      let vulns = [];
-                      try {
-                        // Tenta converter as recomendações de volta para array (se houver)
-                        if (record.recomendacoes) {
-                          vulns = JSON.parse(record.recomendacoes);
-                        }
-                      } catch (e) {
-                        console.error('Erro ao parsear vulnerabilidades:', e);
+              <div className="w-full">
+                {/* Visualização Mobile (Cartões) */}
+                <div className="block lg:hidden space-y-4">
+                  {records.map((record) => {
+                    let vulns = [];
+                    try {
+                      if (record.recomendacoes) {
+                        vulns = JSON.parse(record.recomendacoes);
                       }
+                    } catch (e) {
+                      console.error('Erro ao parsear vulnerabilidades:', e);
+                    }
 
-                      return (
-                        <tr key={record.id} className="border-b border-slate-800/50 hover:bg-slate-800/20 transition-colors">
-                          <td className="py-4 px-4 text-white font-medium whitespace-nowrap">
-                            {record.nome || 'Anônimo'}
-                          </td>
-                          <td className="py-4 px-4 text-slate-300 text-sm whitespace-nowrap">
-                            {formatDate(record.created_at)}
-                          </td>
-                          <td className="py-4 px-4 text-white font-bold">
-                            {record.score_total} / 50
-                          </td>
-                          <td className="py-4 px-4">
+                    return (
+                      <div key={record.id} className="bg-slate-800/30 p-5 rounded-xl border border-slate-700/50 flex flex-col gap-3 shadow-sm">
+                        <div className="flex justify-between items-start border-b border-slate-700/50 pb-3">
+                          <div>
+                            <span className="text-white font-bold text-lg block">{record.nome || 'Anônimo'}</span>
+                            <span className="text-slate-400 text-xs">{formatDate(record.created_at)}</span>
+                          </div>
+                          <div className="text-right">
+                            <span className="text-white font-bold block text-lg">{record.score_total}/50</span>
+                            {record.avaliacao_estrelas > 0 && (
+                              <div className="flex items-center justify-end gap-1 text-yellow-400 mt-1">
+                                <span className="text-sm">{record.avaliacao_estrelas}</span>
+                                <Star className="w-3 h-3 fill-yellow-400" />
+                              </div>
+                            )}
+                          </div>
+                        </div>
+
+                        <div className="flex flex-col gap-2 pt-1">
+                          <div className="flex justify-between items-center">
+                            <span className="text-slate-400 text-sm">Nível de Risco:</span>
                             <span className={`px-3 py-1 rounded-full text-xs font-bold ${
                               record.nivel_risco === 'Alto Risco' ? 'bg-red-900/30 text-red-400 border border-red-500/30' :
                               record.nivel_risco === 'Risco Médio' ? 'bg-yellow-900/30 text-yellow-400 border border-yellow-500/30' :
@@ -282,37 +279,111 @@ const Dashboard = () => {
                             }`}>
                               {record.nivel_risco}
                             </span>
-                          </td>
-                          <td className="py-4 px-4 text-slate-300">
-                            {record.avaliacao_estrelas > 0 ? (
-                              <div className="flex items-center gap-1 text-yellow-400">
-                                {record.avaliacao_estrelas} <Star className="w-4 h-4 fill-yellow-400" />
-                              </div>
-                            ) : (
-                              <span className="text-slate-500">-</span>
-                            )}
-                          </td>
-                          <td className="py-4 px-4 text-slate-400 text-sm">
+                          </div>
+
+                          <div className="flex flex-col gap-1 mt-2">
+                            <span className="text-slate-400 text-sm">Vulnerabilidades:</span>
                             {vulns.length > 0 ? (
-                              <ul className="list-disc list-inside">
+                              <ul className="list-disc list-inside text-slate-300 text-sm pl-2">
                                 {vulns.map((v, i) => (
-                                  <li key={i} className="truncate max-w-xs xl:max-w-md" title={v.nomeGolpe || v.categoria}>
+                                  <li key={i} className="truncate" title={v.nomeGolpe || v.categoria}>
                                     {v.nomeGolpe || v.categoria}
                                   </li>
                                 ))}
                               </ul>
                             ) : (
-                              <span className="text-green-400">Nenhuma crítica</span>
+                              <span className="text-green-400 text-sm font-medium">Nenhuma crítica</span>
                             )}
-                          </td>
-                          <td className="py-4 px-4 text-slate-300 text-sm italic max-w-xs xl:max-w-md truncate" title={record.comentario || ''}>
-                            {record.comentario ? `"${record.comentario}"` : <span className="text-slate-600 not-italic">-</span>}
-                          </td>
-                        </tr>
-                      );
-                    })}
-                  </tbody>
-                </table>
+                          </div>
+
+                          {record.comentario && (
+                            <div className="mt-2 bg-slate-900/50 p-3 rounded-lg border border-slate-700/50">
+                              <span className="text-slate-500 text-xs uppercase tracking-wider block mb-1">Feedback do Usuário</span>
+                              <span className="text-slate-300 text-sm italic">"{record.comentario}"</span>
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+
+                {/* Visualização Desktop (Tabela) */}
+                <div className="hidden lg:block overflow-x-auto">
+                  <table className="w-full text-left border-collapse">
+                    <thead>
+                      <tr className="border-b border-cyber-border">
+                        <th className="py-4 px-4 text-slate-400 font-medium text-sm">Nome</th>
+                        <th className="py-4 px-4 text-slate-400 font-medium text-sm">Data/Hora</th>
+                        <th className="py-4 px-4 text-slate-400 font-medium text-sm">Pontuação</th>
+                        <th className="py-4 px-4 text-slate-400 font-medium text-sm">Nível de Risco</th>
+                        <th className="py-4 px-4 text-slate-400 font-medium text-sm">Nota (Estrelas)</th>
+                        <th className="py-4 px-4 text-slate-400 font-medium text-sm">Vulnerabilidades Detectadas</th>
+                        <th className="py-4 px-4 text-slate-400 font-medium text-sm">Comentário / Feedback</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {records.map((record) => {
+                        let vulns = [];
+                        try {
+                          if (record.recomendacoes) {
+                            vulns = JSON.parse(record.recomendacoes);
+                          }
+                        } catch (e) {
+                          console.error('Erro ao parsear vulnerabilidades:', e);
+                        }
+
+                        return (
+                          <tr key={record.id} className="border-b border-slate-800/50 hover:bg-slate-800/20 transition-colors">
+                            <td className="py-4 px-4 text-white font-medium whitespace-nowrap">
+                              {record.nome || 'Anônimo'}
+                            </td>
+                            <td className="py-4 px-4 text-slate-300 text-sm whitespace-nowrap">
+                              {formatDate(record.created_at)}
+                            </td>
+                            <td className="py-4 px-4 text-white font-bold">
+                              {record.score_total} / 50
+                            </td>
+                            <td className="py-4 px-4">
+                              <span className={`px-3 py-1 rounded-full text-xs font-bold ${
+                                record.nivel_risco === 'Alto Risco' ? 'bg-red-900/30 text-red-400 border border-red-500/30' :
+                                record.nivel_risco === 'Risco Médio' ? 'bg-yellow-900/30 text-yellow-400 border border-yellow-500/30' :
+                                'bg-green-900/30 text-green-400 border border-green-500/30'
+                              }`}>
+                                {record.nivel_risco}
+                              </span>
+                            </td>
+                            <td className="py-4 px-4 text-slate-300">
+                              {record.avaliacao_estrelas > 0 ? (
+                                <div className="flex items-center gap-1 text-yellow-400">
+                                  {record.avaliacao_estrelas} <Star className="w-4 h-4 fill-yellow-400" />
+                                </div>
+                              ) : (
+                                <span className="text-slate-500">-</span>
+                              )}
+                            </td>
+                            <td className="py-4 px-4 text-slate-400 text-sm">
+                              {vulns.length > 0 ? (
+                                <ul className="list-disc list-inside">
+                                  {vulns.map((v, i) => (
+                                    <li key={i} className="truncate max-w-xs xl:max-w-md" title={v.nomeGolpe || v.categoria}>
+                                      {v.nomeGolpe || v.categoria}
+                                    </li>
+                                  ))}
+                                </ul>
+                              ) : (
+                                <span className="text-green-400">Nenhuma crítica</span>
+                              )}
+                            </td>
+                            <td className="py-4 px-4 text-slate-300 text-sm italic max-w-xs xl:max-w-md truncate" title={record.comentario || ''}>
+                              {record.comentario ? `"${record.comentario}"` : <span className="text-slate-600 not-italic">-</span>}
+                            </td>
+                          </tr>
+                        );
+                      })}
+                    </tbody>
+                  </table>
+                </div>
               </div>
             )}
           </div>
