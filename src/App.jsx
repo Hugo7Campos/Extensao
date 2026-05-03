@@ -1,6 +1,7 @@
 import React from 'react';
-// Importa as ferramentas de roteamento para navegar entre as páginas sem recarregar o navegador
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+// HashRouter é necessário para o GitHub Pages (servidor estático não suporta rotas do BrowserRouter)
+// Com HashRouter, as URLs ficam como: /#/quiz, /#/result, /#/dashboard
+import { HashRouter as Router, Routes, Route } from 'react-router-dom';
 
 // Importa as páginas da aplicação
 import Home from './pages/Home';
